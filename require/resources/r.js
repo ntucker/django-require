@@ -2842,13 +2842,15 @@ define('lang', function () {
          * are keys that should be ignored.
          * @return {Object}
          */
-        deeplikeCopy: function (obj, ignoredProps) {
+        deeplikeCopy: function (obj, ignoredProps, depth) {
             var type, result;
+            if (depth===undefined) depth = 0;
+            if (depth > 15) return obj;
 
             if (lang.isArray(obj)) {
                 result = [];
                 obj.forEach(function(value) {
-                    result.push(lang.deeplikeCopy(value, ignoredProps));
+                    result.push(lang.deeplikeCopy(value, ignoredProps, depth+1));
                 });
                 return result;
             }
@@ -2864,7 +2866,7 @@ define('lang', function () {
             result = {};
             lang.eachProp(obj, function(value, key) {
                 if (!ignoredProps || !hasProp(ignoredProps, key)) {
-                    result[key] = lang.deeplikeCopy(value, ignoredProps);
+                    result[key] = lang.deeplikeCopy(value, ignoredProps, depth+1);
                 }
             });
             return result;
